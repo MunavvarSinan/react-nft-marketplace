@@ -1,23 +1,34 @@
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
+import Header from './components/header';
+import PunkList from './components/PunkList';
+import axios from 'axios';
+import Main from './components/MainComp';
 
 function App() {
+  const [punkListData, setPunkListData] = useState([]);
+  const [state, setState] = useState(0);
+
+  console.log(state);
+  useEffect(() => {
+    const getMyNft = async () => {
+      const response = await axios.get(
+        'https://testnets-api.opensea.io/assets?asset_contract_address=0xe6C86e3BcC6AD0053761F0eF8aEC26c9EF9593DF&order_direction=asc'
+      );
+      console.log(response.data.assets);
+      setPunkListData(response.data.assets);
+    };
+    return getMyNft();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='app'>
+      <Header />
+      {punkListData.length > 0 && (
+        <>
+          <Main  punkListData={punkListData} state={state}/>
+          <PunkList punkListData={punkListData} setState={setState} />{' '}
+        </>
+      )}
     </div>
   );
 }
